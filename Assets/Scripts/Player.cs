@@ -33,6 +33,11 @@ public class Player : MonoBehaviour
         left.onClick.RemoveAllListeners();
         right.onClick.RemoveAllListeners();
         wait.onClick.RemoveAllListeners();
+        
+        up.gameObject.SetActive(false);
+        down.gameObject.SetActive(false);
+        left.gameObject.SetActive(false);
+        right.gameObject.SetActive(false);
 
         // TODO: Maybe replace with a dynamic button placement (on top of each edge or sth).
         foreach (var node in _adjacentNodes)
@@ -41,18 +46,22 @@ public class Player : MonoBehaviour
             if (position.x > transform.position.x)
             {
                 right.onClick.AddListener(() => onNextNode(node));
+                right.gameObject.SetActive(true);
             }
             else if (position.x < transform.position.x)
             {
                 left.onClick.AddListener(() => onNextNode(node));
+                left.gameObject.SetActive(true);
             }
             else if (position.y > transform.position.y)
             {
                 up.onClick.AddListener(() => onNextNode(node));
+                up.gameObject.SetActive(true);
             }
             else if (position.y < transform.position.y)
             {
                 down.onClick.AddListener(() => onNextNode(node));
+                down.gameObject.SetActive(true);
             }
         }
         
