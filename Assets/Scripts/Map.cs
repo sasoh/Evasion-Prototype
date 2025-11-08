@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Map : MonoBehaviour
@@ -7,11 +8,11 @@ public class Map : MonoBehaviour
     [SerializeField] private GameObject oppositionPrefab;
     [SerializeField] private GameObject mapNodesParent;
     [SerializeField] private Node startNode;
-    [SerializeField] private Node oppositionStartNode;
+    [SerializeField] private Node[] oppositionStartNodes;
     [SerializeField] private Node endNode;
 
     private Player _player;
-    private Opposition _opposition;
+    private readonly OppositionController _oppositionController = new();
     private readonly Dictionary<Node, HashSet<Node>> _nodes = new();
     private int _turn;
     private bool _playerTracked;
@@ -24,7 +25,6 @@ public class Map : MonoBehaviour
 
     private void Setup()
     {
-        // map setup
         var mapNodes = mapNodesParent.GetComponentsInChildren<Node>();
         foreach (var node in mapNodes)
         {
@@ -48,8 +48,7 @@ public class Map : MonoBehaviour
 
             _nodes[node] = links;
         }
-        
-        // spawn player
+
         var playerInstance = Instantiate(playerPrefab);
         if (playerInstance.TryGetComponent<Player>(out var player))
         {
@@ -57,12 +56,11 @@ public class Map : MonoBehaviour
             _player.SetCurrentNode(startNode, _nodes[startNode]);
         }
 
-        // // spawn opposition
-        var oppositionInstance = Instantiate(oppositionPrefab);
-        if (oppositionInstance.TryGetComponent<Opposition>(out var opposition))
+        foreach (var node in oppositionStartNodes)
         {
-            _opposition = opposition;
-            _opposition.SetCurrentNode(oppositionStartNode, _nodes[oppositionStartNode]);
+            var oppositionInstance = Instantiate(oppositionPrefab);
+            if (!oppositionInstance.TryGetComponent<Opposition>(out var o)) continue;
+            _oppositionController.Add(o, node, OnCheckPlayerVisibility);
         }
     }
 
@@ -75,31 +73,30 @@ public class Map : MonoBehaviour
         }
 
         _turn++;
-        
+
         if (_turn % 2 != 0)
         {
-            _player.NextTurn(PlayerMove, OnCheckPlayerVisibility(_opposition.currentNode));
+            _player.NextTurn(
+                PlayerMove,
+                _oppositionController.Opposition.Any(o => OnCheckPlayerVisibility(o.currentNode))
+            );
         }
         else
         {
-            _opposition.NextTurn(OppositionMove, OnCheckPlayerVisibility);
+            _oppositionController.NextTurn(AdjacentForNode, OnCheckPlayerVisibility, NextTurn);
         }
     }
 
-    private void OppositionMove(Node next)
-    {
-        _opposition.SetCurrentNode(next, _nodes[next]);
-        NextTurn();
-    }
+    private IReadOnlyCollection<Node> AdjacentForNode(Node n) => _nodes[n] ?? new HashSet<Node>();
 
     private void PlayerMove(Node next)
     {
         _player.SetCurrentNode(next, _nodes[next]);
         NextTurn();
     }
-    
+
     private bool OnCheckPlayerVisibility(Node node)
     {
-        return _nodes[node].Contains(_player.currentNode);    
+        return _nodes[node].Contains(_player.currentNode) || node == _player.currentNode;
     }
 }
