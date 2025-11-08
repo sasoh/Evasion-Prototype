@@ -6,10 +6,11 @@ public class Map : MonoBehaviour
 {
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject oppositionPrefab;
+    [SerializeField] private GameObject destinationPrefab;
     [SerializeField] private GameObject mapNodesParent;
     [SerializeField] private Node startNode;
     [SerializeField] private Node[] oppositionStartNodes;
-    [SerializeField] private Node endNode;
+    [SerializeField] private Node destinationNode;
 
     private Player _player;
     private readonly OppositionController _oppositionController = new();
@@ -62,11 +63,14 @@ public class Map : MonoBehaviour
             if (!oppositionInstance.TryGetComponent<Opposition>(out var o)) continue;
             _oppositionController.Add(o, node, OnCheckPlayerVisibility);
         }
+        
+        var destinationInstance = Instantiate(destinationPrefab);
+        destinationInstance.transform.position = destinationNode.transform.position;
     }
 
     private void NextTurn()
     {
-        if (_player.currentNode == endNode && !_playerTracked)
+        if (_player.currentNode == destinationNode && !_playerTracked)
         {
             Debug.Log("Destination reached!");
             return;
@@ -97,7 +101,49 @@ public class Map : MonoBehaviour
 
     private bool OnCheckPlayerVisibility(Node node)
     {
-        // TODO: check along direction of looking
-        return _nodes[node].Contains(_player.currentNode) || node == _player.currentNode;
+        var adjacentNodes = AdjacentForNode(node);
+        if (adjacentNodes.Contains(_player.currentNode) || node == _player.currentNode) return true;
+
+        // Prevent infinite loops while searching.
+        var maxIterationDepth = 99;
+        
+        foreach (var adjacent in adjacentNodes)
+        {
+            var direction = (adjacent.transform.position - node.transform.position).normalized;
+            var potential = new HashSet<Node>(AdjacentForNode(adjacent));
+            potential.Remove(adjacent);
+            while (potential.Count > 0)
+            {
+                maxIterationDepth--;
+                if (maxIterationDepth <= 0)
+                {
+                    Debug.LogError("Max iteration depth reached, bailing out");
+                    break;
+                }
+
+                var p = potential.First();
+                potential.Remove(p);
+                
+                var potentialDirection = (p.transform.position - adjacent.transform.position).normalized;
+                if (!AreCollinear(direction, potentialDirection)) continue;
+                if (p == _player.currentNode) return true;
+
+                var ap = AdjacentForNode(p);
+                foreach (var a in ap)
+                {
+                    var aDirection = (a.transform.position - p.transform.position).normalized;
+                    if (!AreCollinear(direction, aDirection)) continue;
+                    potential.Add(a);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static bool AreCollinear(Vector3 direction, Vector3 potentialDirection)
+    {
+        const float collinearityCoefficient = 0.95f;
+        return Vector3.Dot(direction, potentialDirection) > collinearityCoefficient;
     }
 }
