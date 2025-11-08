@@ -24,34 +24,46 @@ public class OppositionController
         Action onTurnComplete
     )
     {
-        foreach (var o in Opposition)
+        var playerSeen = false;
+        foreach (var o in Opposition.Where(o => onCheckPlayerVisibility(o.currentNode)))
         {
-            if (onCheckPlayerVisibility(o.currentNode))
-            {
-                o.wasSeeingPlayer = true;
-                Debug.Log("Seeing player, skip turn...");
-                break;
-            }
+            o.wasSeeingPlayer = true;
+            playerSeen = true;
+        }
 
-            if (o.wasSeeingPlayer)
+        if (playerSeen)
+        {
+            onTurnComplete();
+            Debug.Log("Player visible, waiting.");
+            return;
+        }
+
+        var sawPlayer = Opposition.Where(o => o.wasSeeingPlayer).ToArray();
+        if (sawPlayer.Any())
+        {
+            foreach (var o in sawPlayer)
             {
                 o.wasSeeingPlayer = false;
-                Debug.Log("Considering next move");
-                break;
+                Debug.Log("Considering next move.");
             }
-
-            // move to a random position as long as it's not where we came from
-            var adjacentNodes = new HashSet<Node>(adjacentForNode(o.currentNode));
-            if (adjacentNodes.Count > 1)
+        }
+        else
+        {
+            foreach (var o in Opposition)
             {
-                // adjacentNodes.Remove(o.lastNode);
+                var adjacentNodes = new HashSet<Node>(adjacentForNode(o.currentNode));
+                if (adjacentNodes.Count > 1)
+                {
+                    adjacentNodes.Remove(o.lastNode);
+                }
+
+                var randomDirection = adjacentNodes.ToArray()[Random.Range(0, adjacentNodes.Count)];
+                o.SetCurrentNode(
+                    randomDirection,
+                    onCheckPlayerVisibility(randomDirection)
+                );
+                Debug.Log($"Going towards {randomDirection}.");
             }
-            var randomDirection = adjacentNodes.ToArray()[Random.Range(0, adjacentNodes.Count)];
-            o.SetCurrentNode(
-                randomDirection,
-                onCheckPlayerVisibility(randomDirection)
-            );
-            Debug.Log($"Going towards {randomDirection}");
         }
 
         onTurnComplete();

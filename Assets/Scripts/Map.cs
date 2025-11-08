@@ -97,6 +97,7 @@ public class Map : MonoBehaviour
 
     private bool OnCheckPlayerVisibility(Node node)
     {
+        // TODO: check along direction of looking
         return _nodes[node].Contains(_player.currentNode) || node == _player.currentNode;
     }
 }

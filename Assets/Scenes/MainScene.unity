@@ -3250,6 +3250,7 @@ MonoBehaviour:
   startNode: {fileID: 281309257}
   oppositionStartNodes:
   - {fileID: 535982836}
+  - {fileID: 1257297129}
   endNode: {fileID: 1949674201}
 --- !u!1001 &1930155154
 PrefabInstance:
