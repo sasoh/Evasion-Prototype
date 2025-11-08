@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Map : MonoBehaviour
 {
@@ -11,12 +12,12 @@ public class Map : MonoBehaviour
     [SerializeField] private Node startNode;
     [SerializeField] private Node[] oppositionStartNodes;
     [SerializeField] private Node destinationNode;
+    [SerializeField] private GameObject victoryScreen;
 
     private Player _player;
     private readonly OppositionController _oppositionController = new();
     private readonly Dictionary<Node, HashSet<Node>> _nodes = new();
     private int _turn;
-    private bool _playerTracked;
 
     private void Start()
     {
@@ -26,6 +27,8 @@ public class Map : MonoBehaviour
 
     private void Setup()
     {
+        victoryScreen.SetActive(false);
+        
         var mapNodes = mapNodesParent.GetComponentsInChildren<Node>();
         foreach (var node in mapNodes)
         {
@@ -70,9 +73,11 @@ public class Map : MonoBehaviour
 
     private void NextTurn()
     {
-        if (_player.currentNode == destinationNode && !_playerTracked)
+        var playerSeen = _oppositionController.Opposition.Any(o => OnCheckPlayerVisibility(o.currentNode));
+        if (_player.currentNode == destinationNode && !playerSeen)
         {
             Debug.Log("Destination reached!");
+            victoryScreen.SetActive(true);
             return;
         }
 
@@ -82,7 +87,7 @@ public class Map : MonoBehaviour
         {
             _player.NextTurn(
                 PlayerMove,
-                _oppositionController.Opposition.Any(o => OnCheckPlayerVisibility(o.currentNode))
+                playerSeen
             );
         }
         else
@@ -146,4 +151,6 @@ public class Map : MonoBehaviour
         const float collinearityCoefficient = 0.95f;
         return Vector3.Dot(direction, potentialDirection) > collinearityCoefficient;
     }
+
+    public void RestartGame() => SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 }

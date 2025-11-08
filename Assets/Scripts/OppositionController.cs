@@ -33,24 +33,36 @@ public class OppositionController
 
         if (playerSeen)
         {
+            foreach (var o in Opposition)
+            {
+                o.UpdateUI(true, false);
+            }
+         
+            Debug.Log("Player visible, waiting.");   
             onTurnComplete();
-            Debug.Log("Player visible, waiting.");
             return;
         }
 
         var sawPlayer = Opposition.Where(o => o.wasSeeingPlayer).ToArray();
         if (sawPlayer.Any())
         {
-            foreach (var o in sawPlayer)
+            foreach (var os in sawPlayer)
             {
-                o.wasSeeingPlayer = false;
+                os.wasSeeingPlayer = false;
                 Debug.Log("Considering next move.");
+                foreach (var o in Opposition)
+                {
+                    o.UpdateUI(false, true);
+                }
             }
         }
         else
         {
+            var foundPlayer = false;
             foreach (var o in Opposition)
             {
+                o.UpdateUI(false, true);
+                
                 var adjacentNodes = new HashSet<Node>(adjacentForNode(o.currentNode));
                 if (adjacentNodes.Count > 1)
                 {
@@ -63,6 +75,16 @@ public class OppositionController
                     onCheckPlayerVisibility(randomDirection)
                 );
                 Debug.Log($"Going towards {randomDirection}.");
+                foundPlayer = onCheckPlayerVisibility(randomDirection);
+                if (foundPlayer) break;
+            }
+
+            if (foundPlayer)
+            {
+                foreach (var o in Opposition)
+                {
+                    o.UpdateUI(true, false);
+                }
             }
         }
 
