@@ -68,10 +68,9 @@ public class Map : MonoBehaviour
 
     private void NextTurn()
     {
-        // TODO: End -- check if player reached destination & is untracked.
         if (_player.currentNode == endNode && !_playerTracked)
         {
-            Debug.Log("Win!");
+            Debug.Log("Destination reached!");
             return;
         }
 
