@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
@@ -27,7 +28,6 @@ public class Player : MonoBehaviour
     {
         trackedPanel.SetActive(isTracked);
         
-        // TODO: Set button visibility depending on the possible directions.
         up.onClick.RemoveAllListeners();
         down.onClick.RemoveAllListeners();
         left.onClick.RemoveAllListeners();
@@ -43,24 +43,25 @@ public class Player : MonoBehaviour
         foreach (var node in _adjacentNodes)
         {
             var position = node.transform.position;
+            UnityAction toNextNode = () => onNextNode(node);
             if (position.x > transform.position.x)
             {
-                right.onClick.AddListener(() => onNextNode(node));
+                right.onClick.AddListener(toNextNode);
                 right.gameObject.SetActive(true);
             }
             else if (position.x < transform.position.x)
             {
-                left.onClick.AddListener(() => onNextNode(node));
+                left.onClick.AddListener(toNextNode);
                 left.gameObject.SetActive(true);
             }
             else if (position.y > transform.position.y)
             {
-                up.onClick.AddListener(() => onNextNode(node));
+                up.onClick.AddListener(toNextNode);
                 up.gameObject.SetActive(true);
             }
             else if (position.y < transform.position.y)
             {
-                down.onClick.AddListener(() => onNextNode(node));
+                down.onClick.AddListener(toNextNode);
                 down.gameObject.SetActive(true);
             }
         }
