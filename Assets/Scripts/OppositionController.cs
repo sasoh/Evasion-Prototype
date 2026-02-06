@@ -48,7 +48,7 @@ public class OppositionController
                 Debug.Log("Considering next move.");
                 foreach (var o in Opposition)
                 {
-                    o.UpdateUI(false, true);
+                    o.UpdateUI(false, false);
                 }
             }
         }
@@ -75,12 +75,9 @@ public class OppositionController
                 if (foundPlayer) break;
             }
 
-            if (foundPlayer)
+            foreach (var o in Opposition)
             {
-                foreach (var o in Opposition)
-                {
-                    o.UpdateUI(true, false);
-                }
+                o.UpdateUI(foundPlayer, !foundPlayer);
             }
         }
 
