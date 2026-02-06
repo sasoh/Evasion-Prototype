@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Pixelplacement;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -15,11 +16,18 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject trackedPanel;
 
     private readonly HashSet<Node> _adjacentNodes = new();
+    private Vector3 _currentPosition;
 
-    public void SetCurrentNode(Node newCurrentNode, HashSet<Node> adjacentNodes)
+    public void SetCurrentNode(Node newCurrentNode, HashSet<Node> adjacentNodes, bool isInit = false)
     {
         currentNode = newCurrentNode;
-        transform.position = currentNode.transform.position;
+        Tween.Position(
+            transform,
+            currentNode.transform.position,
+            isInit ? 0.0f : AnimationProperties.MovementTweenDuration,
+            0.0f
+        );
+        _currentPosition = currentNode.transform.position;
         _adjacentNodes.Clear();
         _adjacentNodes.UnionWith(adjacentNodes);
     }
@@ -44,22 +52,22 @@ public class Player : MonoBehaviour
         {
             var position = node.transform.position;
             UnityAction toNextNode = () => onNextNode(node);
-            if (position.x > transform.position.x)
+            if (position.x > _currentPosition.x)
             {
                 right.onClick.AddListener(toNextNode);
                 right.gameObject.SetActive(true);
             }
-            else if (position.x < transform.position.x)
+            else if (position.x < _currentPosition.x)
             {
                 left.onClick.AddListener(toNextNode);
                 left.gameObject.SetActive(true);
             }
-            else if (position.y > transform.position.y)
+            else if (position.y > _currentPosition.y)
             {
                 up.onClick.AddListener(toNextNode);
                 up.gameObject.SetActive(true);
             }
-            else if (position.y < transform.position.y)
+            else if (position.y < _currentPosition.y)
             {
                 down.onClick.AddListener(toNextNode);
                 down.gameObject.SetActive(true);

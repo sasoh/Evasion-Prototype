@@ -55,7 +55,7 @@ public class Map : MonoBehaviour
         var playerInstance = Instantiate(playerPrefab);
         if (!playerInstance.TryGetComponent<Player>(out var player)) return;
         _player = player;
-        _player.SetCurrentNode(startNode, _nodes[startNode]);
+        _player.SetCurrentNode(startNode, _nodes[startNode], true);
     }
 
     private void SetupNodeLinks()

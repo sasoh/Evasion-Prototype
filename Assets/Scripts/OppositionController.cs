@@ -8,13 +8,9 @@ public class OppositionController
 {
     public readonly List<Opposition> Opposition = new();
 
-    public void Add(
-        Opposition opposition,
-        Node node,
-        Func<Node, bool> onCheckPlayerVisibility
-    )
+    public void Add(Opposition opposition, Node node, Func<Node, bool> onCheckPlayerVisibility)
     {
-        opposition.SetCurrentNode(node, onCheckPlayerVisibility(node));
+        opposition.SetCurrentNode(node, onCheckPlayerVisibility(node), true);
         Opposition.Add(opposition);
     }
 

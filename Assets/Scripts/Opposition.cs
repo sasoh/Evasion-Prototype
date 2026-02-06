@@ -1,3 +1,4 @@
+using Pixelplacement;
 using UnityEngine;
 
 public class Opposition : MonoBehaviour
@@ -10,11 +11,16 @@ public class Opposition : MonoBehaviour
     public Node lastNode;
     public bool wasSeeingPlayer;
     
-    public void SetCurrentNode(Node newCurrentNode, bool seesPlayer)
+    public void SetCurrentNode(Node newCurrentNode, bool seesPlayer, bool isInit = false)
     {
         lastNode = currentNode;
         currentNode = newCurrentNode;
-        transform.position = currentNode.transform.position;
+        Tween.Position(
+            transform,
+            currentNode.transform.position,
+            isInit ? 0.0f : AnimationProperties.MovementTweenDuration,
+            0.0f
+        );
         wasSeeingPlayer = seesPlayer;
         if (!seesPlayer) return;
         UpdateUI(true, false);
