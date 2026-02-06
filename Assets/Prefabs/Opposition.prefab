@@ -226,6 +226,7 @@ MonoBehaviour:
   imageObserving: {fileID: 8795205499604488737}
   imageThinking: {fileID: 7367168526085388200}
   imageSearching: {fileID: 4857440508080887495}
+  carImagePanel: {fileID: 503772051027153023}
   currentNode: {fileID: 0}
   lastNode: {fileID: 0}
   wasSeeingPlayer: 0

@@ -402,6 +402,7 @@ MonoBehaviour:
   right: {fileID: 8686994570668083049}
   wait: {fileID: 4631534319646507799}
   trackedPanel: {fileID: 7418477665710004016}
+  carImagePanel: {fileID: 4504169497460882624}
 --- !u!1 &2684201893791195443
 GameObject:
   m_ObjectHideFlags: 0

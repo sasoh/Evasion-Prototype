@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Pixelplacement;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -14,19 +13,21 @@ public class Player : MonoBehaviour
     [SerializeField] private Button right;
     [SerializeField] private Button wait;
     [SerializeField] private GameObject trackedPanel;
+    [SerializeField] private GameObject carImagePanel;
 
     private readonly HashSet<Node> _adjacentNodes = new();
     private Vector3 _currentPosition;
 
     public void SetCurrentNode(Node newCurrentNode, HashSet<Node> adjacentNodes, bool isInit = false)
     {
-        currentNode = newCurrentNode;
-        Tween.Position(
+        CarAnimator.Animate(
             transform,
-            currentNode.transform.position,
-            isInit ? 0.0f : AnimationProperties.MovementTweenDuration,
-            0.0f
+            carImagePanel,
+            currentNode? currentNode.transform.position : newCurrentNode.transform.position,
+            newCurrentNode.transform.position,
+            isInit
         );
+        currentNode = newCurrentNode;
         _currentPosition = currentNode.transform.position;
         _adjacentNodes.Clear();
         _adjacentNodes.UnionWith(adjacentNodes);

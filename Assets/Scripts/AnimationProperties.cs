@@ -2,5 +2,6 @@ using UnityEngine;
 
 public static class AnimationProperties
 {
-    public static float MovementTweenDuration = 0.2f;
+    public const float MovementTweenDuration = 0.2f;
+    public const float RotationTweenDuration = 0.1f;
 }

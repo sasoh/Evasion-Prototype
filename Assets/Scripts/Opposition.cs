@@ -1,4 +1,3 @@
-using Pixelplacement;
 using UnityEngine;
 
 public class Opposition : MonoBehaviour
@@ -6,6 +5,7 @@ public class Opposition : MonoBehaviour
     [SerializeField] private GameObject imageObserving;
     [SerializeField] private GameObject imageThinking;
     [SerializeField] private GameObject imageSearching;
+    [SerializeField] private GameObject carImagePanel;
     
     public Node currentNode;
     public Node lastNode;
@@ -13,14 +13,15 @@ public class Opposition : MonoBehaviour
     
     public void SetCurrentNode(Node newCurrentNode, bool seesPlayer, bool isInit = false)
     {
+        CarAnimator.Animate(
+            transform,
+            carImagePanel,
+            currentNode? currentNode.transform.position : newCurrentNode.transform.position,
+            newCurrentNode.transform.position,
+            isInit
+        );
         lastNode = currentNode;
         currentNode = newCurrentNode;
-        Tween.Position(
-            transform,
-            currentNode.transform.position,
-            isInit ? 0.0f : AnimationProperties.MovementTweenDuration,
-            0.0f
-        );
         wasSeeingPlayer = seesPlayer;
         if (!seesPlayer) return;
         UpdateUI(true, false);
