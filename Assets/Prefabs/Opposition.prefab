@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 297761703447499198, guid: 53fc8a0e810cfaa4487f90c803d06468, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 53fc8a0e810cfaa4487f90c803d06468, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -188,6 +188,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8134839571521640810}
   - component: {fileID: 5263348366763336353}
+  - component: {fileID: 3788708141392362254}
   m_Layer: 0
   m_Name: Opposition
   m_TagString: Untagged
@@ -230,6 +231,20 @@ MonoBehaviour:
   currentNode: {fileID: 0}
   lastNode: {fileID: 0}
   wasSeeingPlayer: 0
+--- !u!114 &3788708141392362254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2793320552704576219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a384553b24efa543b84b704940676f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OppositionUIAnimator
+  imageThinking: {fileID: 7367168526085388200}
+  imageSearching: {fileID: 4857440508080887495}
 --- !u!1 &4857440508080887495
 GameObject:
   m_ObjectHideFlags: 0
@@ -295,7 +310,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 8962406771060829681, guid: a532731f84062b840b0dffa2cfd143d0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a532731f84062b840b0dffa2cfd143d0, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -370,7 +385,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -2088608361510104183, guid: 7f9a840cc3553cd48b4009aafd30d4e0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7f9a840cc3553cd48b4009aafd30d4e0, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -448,7 +463,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5336505627269347889, guid: db2007284ddec2244be86cf36d7c5675, type: 3}
+  m_Sprite: {fileID: 21300000, guid: db2007284ddec2244be86cf36d7c5675, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -523,7 +538,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2007106417775661465, guid: 67af39cfdf35bea498a7a94fdd6cec39, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 67af39cfdf35bea498a7a94fdd6cec39, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
