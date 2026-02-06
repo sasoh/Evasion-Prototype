@@ -28,7 +28,38 @@ public class Map : MonoBehaviour
     private void Setup()
     {
         victoryScreen.SetActive(false);
-        
+        SetupNodeLinks();
+        SetupPlayer();
+        SetupOpposition();
+        SetupDestination();
+    }
+
+    private void SetupDestination()
+    {
+        var destinationInstance = Instantiate(destinationPrefab);
+        destinationInstance.transform.position = destinationNode.transform.position;
+    }
+
+    private void SetupOpposition()
+    {
+        foreach (var node in oppositionStartNodes)
+        {
+            var oppositionInstance = Instantiate(oppositionPrefab);
+            if (!oppositionInstance.TryGetComponent<Opposition>(out var o)) continue;
+            _oppositionController.Add(o, node, OnCheckPlayerVisibility);
+        }
+    }
+
+    private void SetupPlayer()
+    {
+        var playerInstance = Instantiate(playerPrefab);
+        if (!playerInstance.TryGetComponent<Player>(out var player)) return;
+        _player = player;
+        _player.SetCurrentNode(startNode, _nodes[startNode]);
+    }
+
+    private void SetupNodeLinks()
+    {
         var mapNodes = mapNodesParent.GetComponentsInChildren<Node>();
         foreach (var node in mapNodes)
         {
@@ -52,48 +83,29 @@ public class Map : MonoBehaviour
 
             _nodes[node] = links;
         }
-
-        var playerInstance = Instantiate(playerPrefab);
-        if (playerInstance.TryGetComponent<Player>(out var player))
-        {
-            _player = player;
-            _player.SetCurrentNode(startNode, _nodes[startNode]);
-        }
-
-        foreach (var node in oppositionStartNodes)
-        {
-            var oppositionInstance = Instantiate(oppositionPrefab);
-            if (!oppositionInstance.TryGetComponent<Opposition>(out var o)) continue;
-            _oppositionController.Add(o, node, OnCheckPlayerVisibility);
-        }
-        
-        var destinationInstance = Instantiate(destinationPrefab);
-        destinationInstance.transform.position = destinationNode.transform.position;
     }
 
     private void NextTurn()
     {
         var playerSeen = _oppositionController.Opposition.Any(o => OnCheckPlayerVisibility(o.currentNode));
-        if (_player.currentNode == destinationNode && !playerSeen)
-        {
-            Debug.Log("Destination reached!");
-            victoryScreen.SetActive(true);
-            return;
-        }
-
+        if (CheckEndGame(playerSeen)) return;
         _turn++;
 
         if (_turn % 2 != 0)
         {
-            _player.NextTurn(
-                PlayerMove,
-                playerSeen
-            );
+            _player.NextTurn(PlayerMove, playerSeen);
         }
         else
         {
             _oppositionController.NextTurn(AdjacentForNode, OnCheckPlayerVisibility, NextTurn);
         }
+    }
+
+    private bool CheckEndGame(bool playerSeen)
+    {
+        if (_player.currentNode != destinationNode || playerSeen) return false;
+        victoryScreen.SetActive(true);
+        return true;
     }
 
     private IReadOnlyCollection<Node> AdjacentForNode(Node n) => _nodes[n] ?? new HashSet<Node>();
