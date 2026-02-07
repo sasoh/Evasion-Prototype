@@ -15,6 +15,7 @@ public class Node : MonoBehaviour
         var lines = new List<Vector3>();
         foreach (var n in adjacent)
         {
+            if (n == null || !n.gameObject.activeInHierarchy) continue;
             lines.Add(transform.position);
             lines.Add(n.gameObject.transform.position);
         }
